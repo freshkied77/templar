@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Exceptions{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Exceptions</h1>
+    <p>Issues requiring your attention</p>
+</div>
+
+{% if exceptions %}
+{% for exc in exceptions %}
+<div class="exception-card severity-{{ exc.severity }}">
+    <div class="exc-header">
+        <div class="exc-title">{{ exc.title }}</div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <span class="badge badge-{% if exc.severity == 'high' %}error{% else %}warning{% endif %}">{{ exc.severity }}</span>
+            <span class="exc-time">{{ exc.timestamp[:16] }}</span>
+        </div>
+    </div>
+    <div class="exc-desc">{{ exc.description }}</div>
+    <button class="btn btn-primary" onclick="resolve({{ exc.id }})">Mark Resolved</button>
+</div>
+{% endfor %}
+{% else %}
+<div class="card">
+    <div class="empty-state">
+        <div class="icon">✨</div>
+        <p>No open exceptions.</p>
+        <p style="font-size: 13px; margin-top: 4px;">The system is running cleanly. Exceptions will appear here when something needs your attention.</p>
+    </div>
+</div>
+{% endif %}
+
+<script>
+async function resolve(id) {
+    try {
+        const res = await fetch(`/api/exceptions/${id}/resolve`, { method: 'POST' });
+        if (res.ok) location.reload();
+    } catch (e) { alert(e.message); }
+}
+</script>
+{% endblock %}

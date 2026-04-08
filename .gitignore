@@ -1,0 +1,35 @@
+# Env / secrets
+.env
+.env.example
+
+# Virtual environments
+.venv/
+venv/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*.so
+
+# Local data / memory store
+data/
+*.db
+
+# OS junk
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Render/Railway etc.
+.render/
+.railway/
+
+# Local config
+.claude/settings.local.json
+
+# Tests (empty dir)
+tests/
+
+# Logs
+*.log

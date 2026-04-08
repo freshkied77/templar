@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Sales{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Sales Performance</h1>
+    <p>Revenue and conversion data across all marketplaces</p>
+</div>
+
+<div class="stat-grid">
+    <div class="stat-card">
+        <div class="label">Total Revenue</div>
+        <div class="value" style="color: var(--green);">${{ "%.2f"|format(summary.stats.total_sales_revenue or 0) }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">Active Listings</div>
+        <div class="value" style="color: var(--accent);">{{ summary.stats.active_listings }}</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">Avg Revenue / Listing</div>
+        <div class="value">
+            {% if summary.stats.active_listings > 0 %}
+            ${{ "%.2f"|format((summary.stats.total_sales_revenue or 0) / summary.stats.active_listings) }}
+            {% else %}—{% endif %}
+        </div>
+    </div>
+    <div class="stat-card">
+        <div class="label">Marketplaces</div>
+        <div class="value">{{ summary.sales_by_marketplace|length }}</div>
+    </div>
+</div>
+
+<div class="card">
+    <h3 style="font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px;">Revenue by Marketplace</h3>
+    {% if summary.sales_by_marketplace %}
+    <table>
+        <thead>
+            <tr>
+                <th>Marketplace</th>
+                <th>Sales</th>
+                <th>Revenue</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mp, count in summary.sales_by_marketplace.items() %}
+            <tr>
+                <td style="text-transform: capitalize; font-weight: 500;">{{ mp }}</td>
+                <td style="color: var(--green); font-weight: 700;">{{ count }}</td>
+                <td style="color: var(--accent);">${{ "%.2f"|format(summary.revenue_by_marketplace.get(mp, 0) or 0) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <div class="icon">📊</div>
+        <p>No sales recorded yet.</p>
+        <p style="font-size: 13px; margin-top: 4px;">Revenue will appear here once Templar generates listings and they begin receiving orders.</p>
+    </div>
+    {% endif %}
+</div>
+
+<div class="card" style="margin-top: 20px;">
+    <h3 style="font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px;">Revenue by Category</h3>
+    {% if summary.sales_by_category %}
+    <table>
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th>Sales</th>
+                <th>Revenue</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cat, count in summary.sales_by_category.items() %}
+            <tr>
+                <td style="font-weight: 500;">{{ cat }}</td>
+                <td style="color: var(--green); font-weight: 700;">{{ count }}</td>
+                <td style="color: var(--accent);">${{ "%.2f"|format(summary.revenue_by_category.get(cat, 0) or 0) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <div class="icon">📂</div>
+        <p>No category data yet.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

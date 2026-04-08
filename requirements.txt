@@ -1,0 +1,22 @@
+# Templar — AI Digital Product System
+
+# Web dashboard
+fastapi>=0.109.0
+uvicorn>=0.27.0
+jinja2>=3.1.3
+
+# HTTP client for marketplace APIs
+httpx>=0.26.0
+
+# AI providers
+anthropic>=0.18.0
+openai>=1.12.0
+
+# Data storage
+sqlite-utils>=3.36
+
+# Environment
+python-dotenv>=1.0.0
+
+# Utilities
+python-dateutil>=2.8.2

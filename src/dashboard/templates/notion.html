@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block title %}Notion Delivery{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Notion Direct Delivery</h1>
+    <p>Buyers who connected their Notion workspace and template delivery status</p>
+</div>
+
+<div class="stat-grid">
+    <div class="stat-card">
+        <div class="label">Total Connected</div>
+        <div class="value" style="color: var(--accent);">{{ stats.total }}</div>
+        <div class="sub">buyers authorized Notion</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">Delivered</div>
+        <div class="value" style="color: var(--green);">{{ stats.delivered }}</div>
+        <div class="sub">templates in Notion</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">Pending</div>
+        <div class="value" style="color: {% if stats.pending > 0 %}var(--red){% else %}var(--green){% endif %};">
+            {{ stats.pending }}
+        </div>
+        <div class="sub">awaiting delivery</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">Conversion</div>
+        <div class="value">
+            {% if stats.total > 0 %}
+            {{ "%.0f"|format((stats.delivered / stats.total) * 100) }}%
+            {% else %}—{% endif %}
+        </div>
+        <div class="sub">delivery rate</div>
+    </div>
+</div>
+
+<div class="card" style="margin-top: 24px;">
+    <h3 style="font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px;">
+        Notion Buyers
+    </h3>
+    {% if buyers %}
+    <table>
+        <thead>
+            <tr>
+                <th>Workspace</th>
+                <th>Category</th>
+                <th>Status</th>
+                <th>Delivered Page</th>
+                <th>Connected</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for buyer in buyers %}
+            <tr>
+                <td>
+                    <div style="font-weight: 500;">{{ buyer.notion_workspace_name or "—" }}</div>
+                    <div style="font-size: 12px; color: var(--text-muted); font-family: monospace;">{{ buyer.notion_workspace_id[:24] if buyer.notion_workspace_id else "—" }}...</div>
+                </td>
+                <td>{{ buyer.template_category or "—" }}</td>
+                <td>
+                    {% if buyer.status == 'delivered' %}
+                    <span class="badge badge-active">Delivered</span>
+                    {% elif buyer.status == 'authorized' and buyer.delivered_page_url %}
+                    <span class="badge badge-active">Delivered</span>
+                    {% elif buyer.status == 'authorized' %}
+                    <span class="badge badge-warning">Connected</span>
+                    {% else %}
+                    <span class="badge badge-error">{{ buyer.status }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if buyer.delivered_page_url %}
+                    <a href="{{ buyer.delivered_page_url }}" target="_blank" style="color: var(--green); font-size: 13px;">Open in Notion ↗</a>
+                    {% else %}—{% endif %}
+                </td>
+                <td style="font-size: 13px; color: var(--text-muted);">{{ buyer.connected_at[:10] }}</td>
+                <td>
+                    {% if buyer.status == 'authorized' and not buyer.delivered_page_url %}
+                    <button class="btn btn-primary" onclick="deliver('{{ buyer.delivery_token }}')">Deliver Now</button>
+                    {% elif buyer.status == 'delivered' %}
+                    <button class="btn" onclick="redeliver('{{ buyer.delivery_token }}')" style="background: var(--border); color: var(--text);">Re-deliver</button>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <div class="icon">📋</div>
+        <p>No Notion buyers yet.</p>
+        <p style="font-size: 13px; margin-top: 4px;">
+            Buyers connect their Notion workspace via the OAuth link on your purchase confirmation page.<br>
+            Set up the OAuth URL generator in your marketplace integrations to enable this flow.
+        </p>
+    </div>
+    {% endif %}
+</div>
+
+<div class="card" style="margin-top: 20px;">
+    <h3 style="font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px;">
+        How It Works
+    </h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+        <div>
+            <div style="font-weight: 600; margin-bottom: 6px;">1. Buyer purchases</div>
+            <p style="font-size: 13px; color: var(--text-muted);">Buyer completes purchase on Gumroad, Payhip, or LemonSqueezy.</p>
+        </div>
+        <div>
+            <div style="font-weight: 600; margin-bottom: 6px;">2. Connect Notion</div>
+            <p style="font-size: 13px; color: var(--text-muted);">Buyer clicks "Deliver to Notion" and authorizes via OAuth. Their workspace is stored.</p>
+        </div>
+        <div>
+            <div style="font-weight: 600; margin-bottom: 6px;">3. Auto-delivery</div>
+            <p style="font-size: 13px; color: var(--text-muted);">Templar creates the full template database directly in their Notion workspace instantly.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+async function deliver(token) {
+    const template = {
+        title: "Sample Template",
+        category: "Habit Tracker",
+        tagline: "Sample template delivered from Templar",
+        seo_description: "A sample template delivered directly to Notion",
+        tags: ["sample"],
+        structure: {
+            views: ["Table"],
+            properties: []
+        },
+        sample_data: []
+    };
+    try {
+        const res = await fetch(`/api/notion/deliver?delivery_token=${token}`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({template_json: template}),
+        });
+        const data = await res.json();
+        if (res.ok) {
+            alert("Template delivered! URL: " + (data.url || "check buyers page"));
+            location.reload();
+        } else {
+            alert("Delivery failed: " + (data.detail || res.statusText));
+        }
+    } catch (e) {
+        alert("Error: " + e.message);
+    }
+}
+
+async function redeliver(token) {
+    if (!confirm("Re-deliver template to this workspace?")) return;
+    await deliver(token);
+}
+</script>
+{% endblock %}

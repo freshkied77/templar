@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ template.title }} — Templar</title>
+<meta name="description" content="{{ template.description }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #0a0a0f; --surface: #13131a; --surface-2: #1a1a24; --border: #252530; --text: #e0e0e8; --text-muted: #8888a0; --accent: #7c6af7; --accent-dim: rgba(124,106,247,0.12); --green: #34d399; --font: 'Inter', sans-serif; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.6; }
+  a { color: var(--accent); text-decoration: none; }
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(10,10,15,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; height: 60px; }
+  .nav-brand { font-weight: 800; font-size: 20px; }
+  .nav-brand span { color: var(--accent); }
+  .nav-links { display: flex; gap: 8px; margin-left: auto; }
+  .nav-links a { color: var(--text-muted); font-size: 14px; padding: 6px 14px; border-radius: 6px; }
+  .nav-links a:hover { color: var(--text); background: var(--surface-2); text-decoration: none; }
+  .btn { display: inline-block; padding: 12px 28px; border-radius: 10px; font-weight: 600; font-size: 15px; transition: all 0.15s; text-align: center; }
+  .btn-primary { background: var(--accent); color: white; }
+  .btn-primary:hover { background: #6b58e8; text-decoration: none; }
+  .btn-secondary { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); }
+  .container { max-width: 1000px; margin: 0 auto; padding: 60px 24px; }
+  .breadcrumb { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
+  .breadcrumb a { color: var(--text-muted); }
+  .breadcrumb a:hover { color: var(--text); }
+  .detail-grid { display: grid; grid-template-columns: 1fr 340px; gap: 48px; align-items: start; }
+  .detail-art { height: 220px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 80px; }
+  .detail-art.habit { background: linear-gradient(135deg, #1a1a2e, #16213e); }
+  .detail-art.finance { background: linear-gradient(135deg, #0d1f0d, #1a3a1a); }
+  .detail-art.project { background: linear-gradient(135deg, #1a1a2e, #2a1a4a); }
+  .detail-art.content { background: linear-gradient(135deg, #2a1a0a, #3a2a1a); }
+  .detail-art.student { background: linear-gradient(135deg, #1a1a2e, #1a2a4a); }
+  .detail-art.goal { background: linear-gradient(135deg, #2a1a2a, #3a1a3a); }
+  .detail-category { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 8px; }
+  .detail-title { font-size: 32px; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px; }
+  .detail-tagline { font-size: 18px; color: var(--text-muted); margin-bottom: 24px; }
+  .detail-description { font-size: 16px; color: var(--text-muted); margin-bottom: 28px; line-height: 1.8; }
+  .detail-features { list-style: none; }
+  .detail-features li { padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 15px; }
+  .detail-features li::before { content: "✓ "; color: var(--green); font-weight: 700; margin-right: 10px; }
+  .buy-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px; position: sticky; top: 80px; }
+  .buy-card h3 { font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+  .buy-price { font-size: 48px; font-weight: 800; margin-bottom: 4px; }
+  .buy-price span { font-size: 20px; font-weight: 400; color: var(--text-muted); text-decoration: line-through; margin-left: 8px; }
+  .buy-price-note { font-size: 14px; color: var(--text-muted); margin-bottom: 20px; }
+  .buy-card .btn { width: 100%; margin-bottom: 12px; }
+  .buy-note { font-size: 12px; color: var(--text-muted); text-align: center; }
+  .buy-note span { color: var(--green); }
+  .marketplace-links { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+  .marketplace-links p { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+  .marketplace-link { display: block; padding: 10px 14px; background: var(--surface-2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px; font-size: 14px; font-weight: 600; color: var(--text); text-align: center; }
+  .marketplace-link:hover { border-color: var(--accent); text-decoration: none; }
+  @media (max-width: 768px) {
+    .detail-grid { grid-template-columns: 1fr; }
+    .buy-card { position: static; }
+  }
+  footer { border-top: 1px solid var(--border); padding: 40px 24px; max-width: 1160px; margin: 0 auto; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+  footer p { font-size: 14px; color: var(--text-muted); }
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-brand">Temp<span>lar</span></div>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/templates">All Templates</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="breadcrumb">
+    <a href="/">Home</a> &rsaquo; <a href="/templates">Templates</a> &rsaquo; {{ template.category }}
+  </div>
+
+  <div class="detail-grid">
+    <div>
+      <div class="detail-art {{ template.image_class }}">
+        {{ "🎯" if template.image_class == "habit" else "💰" if template.image_class == "finance" else "⚡" if template.image_class == "project" else "📅" if template.image_class == "content" else "🎓" if template.image_class == "student" else "🏆" }}
+      </div>
+      <div style="margin-top: 32px;">
+        <div class="detail-category">{{ template.category }}</div>
+        <h1 class="detail-title">{{ template.title }}</h1>
+        <p class="detail-tagline">{{ template.tagline }}</p>
+        <p class="detail-description">{{ template.description }}</p>
+        <ul class="detail-features">
+          {% for feature in template.features %}
+          <li>{{ feature }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="buy-card">
+      <h3>Get this template</h3>
+      <div class="buy-price">${{ template.price }} <span>$29</span></div>
+      <p class="buy-price-note">One-time payment. Lifetime access.</p>
+      <a href="{{ template.gumroad_url }}" class="btn btn-primary" target="_blank">
+        Buy on Gumroad →
+      </a>
+      <p class="buy-note"><span>✓</span> Instant delivery to Notion &nbsp;<span>✓</span> Lifetime updates</p>
+
+      <div class="marketplace-links">
+        <p>Also available on:</p>
+        <a href="https://payhip.com/templar" class="marketplace-link" target="_blank">Payhip</a>
+        <a href="https://lemonsqueezy.com/templar" class="marketplace-link" target="_blank">LemonSqueezy</a>
+        <a href="https://etsy.com/shop/templar" class="marketplace-link" target="_blank">Etsy Digital</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 Templar. All rights reserved.</p>
+  <div>
+    <a href="/privacy">Privacy</a>
+    <a href="/terms">Terms</a>
+  </div>
+</footer>
+</body>
+</html>

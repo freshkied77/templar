@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Templar{% endblock %} — AI Product System</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #0a0a0f;
+            --surface: #12121a;
+            --border: #1e1e2e;
+            --text: #e0e0e8;
+            --text-muted: #6b6b80;
+            --accent: #7c6af7;
+            --accent-dim: #4a3fa0;
+            --green: #4ade80;
+            --red: #f87171;
+            --yellow: #fbbf24;
+        }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+        nav { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; gap: 0; height: 56px; position: sticky; top: 0; z-index: 100; }
+        .nav-brand { font-weight: 700; font-size: 18px; color: var(--accent); margin-right: 40px; letter-spacing: -0.5px; }
+        .nav-brand span { color: var(--text-muted); font-weight: 400; font-size: 12px; margin-left: 8px; }
+        .nav-links { display: flex; gap: 4px; }
+        .nav-links a { padding: 8px 16px; border-radius: 6px; color: var(--text-muted); text-decoration: none; font-size: 14px; transition: all 0.15s; }
+        .nav-links a:hover { color: var(--text); background: var(--border); }
+        .nav-links a.active { color: var(--accent); background: var(--accent-dim); }
+        .container { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+        .page-header { margin-bottom: 28px; }
+        .page-header h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
+        .page-header p { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+        .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
+        .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+        .stat-card .label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+        .stat-card .value { font-size: 32px; font-weight: 700; }
+        .stat-card .sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+        .badge-active { background: rgba(74, 222, 128, 0.15); color: var(--green); }
+        .badge-error { background: rgba(248, 113, 113, 0.15); color: var(--red); }
+        .badge-warning { background: rgba(251, 191, 36, 0.15); color: var(--yellow); }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+        td { padding: 14px 16px; font-size: 14px; border-bottom: 1px solid var(--border); }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+        .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all 0.15s; text-decoration: none; }
+        .btn-danger { background: rgba(248, 113, 113, 0.15); color: var(--red); }
+        .btn-danger:hover { background: rgba(248, 113, 113, 0.25); }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-primary:hover { background: #6a58e0; }
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+        .empty-state .icon { font-size: 48px; margin-bottom: 16px; }
+        .exception-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; margin-bottom: 12px; border-left: 3px solid var(--red); }
+        .exception-card.severity-medium { border-left-color: var(--yellow); }
+        .exception-card .exc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        .exception-card .exc-title { font-weight: 600; font-size: 14px; }
+        .exception-card .exc-time { font-size: 12px; color: var(--text-muted); }
+        .exception-card .exc-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 12px; }
+        .input-field { width: 100%; padding: 10px 14px; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 14px; }
+        .input-field:focus { outline: none; border-color: var(--accent); }
+        label { display: block; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+        .form-group { margin-bottom: 16px; }
+        .poll-status { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); }
+        .poll-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+        footer { text-align: center; padding: 24px; color: var(--text-muted); font-size: 12px; }
+    </style>
+    {% block extra %}{% endblock %}
+</head>
+<body>
+    <nav>
+        <div class="nav-brand">Templar <span>AI Product System</span></div>
+        <div class="nav-links">
+            <a href="/" class="{% if page == 'overview' %}active{% endif %}">Overview</a>
+            <a href="/listings" class="{% if page == 'listings' %}active{% endif %}">Listings</a>
+            <a href="/sales" class="{% if page == 'sales' %}active{% endif %}">Sales</a>
+            <a href="/exceptions" class="{% if page == 'exceptions' %}active{% endif %}">Exceptions</a>
+            <a href="/notion" class="{% if page == 'notion' %}active{% endif %}">Notion</a>
+            <a href="/generate" class="{% if page == 'generate' %}active{% endif %}">Generate</a>
+        </div>
+        <div class="poll-status" style="margin-left: auto;">
+            <div class="poll-dot"></div>
+            <span id="poll-status">Live</span>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer>
+        Templar — Fully autonomous AI product system &nbsp;|&nbsp;
+        <a href="/api/stats" style="color: var(--accent);">API</a>
+    </footer>
+
+    <script>
+        // Auto-refresh page data every 30 seconds
+        const POLL_INTERVAL = 30000;
+        let lastUpdate = new Date();
+        function updatePollStatus() {
+            document.getElementById('poll-status').textContent =
+                'Live · updated ' + Math.round((new Date() - lastUpdate) / 1000) + 's ago';
+        }
+        setInterval(() => {
+            lastUpdate = new Date();
+            updatePollStatus();
+        }, POLL_INTERVAL);
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

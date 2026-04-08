@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Listings{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>All Listings</h1>
+    <p>Every product listed by Templar across all marketplaces</p>
+</div>
+
+<div class="card">
+    {% if summary.listings %}
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Marketplace</th>
+                <th>Sales</th>
+                <th>Price</th>
+                <th>Listed</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for listing in summary.listings %}
+            <tr>
+                <td>
+                    <div style="font-weight: 500;">{{ listing.title }}</div>
+                    <div style="font-size: 12px; color: var(--text-muted); font-family: monospace;">{{ listing.listing_id[:24] }}...</div>
+                </td>
+                <td>{{ listing.category }}</td>
+                <td style="text-transform: capitalize;">{{ listing.marketplace }}</td>
+                <td>
+                    <span style="color: var(--green); font-weight: 600;">{{ listing.sales_count }}</span>
+                    <span style="color: var(--text-muted); font-size: 12px;"> / ${{ "%.2f"|format(listing.revenue or 0) }}</span>
+                </td>
+                <td style="font-size: 13px;">${{ "%.2f"|format(listing.price or 0) }}</td>
+                <td style="font-size: 13px; color: var(--text-muted);">{{ listing.created_at[:10] }}</td>
+                <td><span class="badge badge-{% if listing.status == 'active' %}active{% else %}error{% endif %}">{{ listing.status }}</span></td>
+                <td>
+                    <button class="btn btn-danger" onclick="delist('{{ listing.listing_id }}', '{{ listing.marketplace }}')">DELIST</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <div class="icon">📦</div>
+        <p>No listings yet.</p>
+        <p style="font-size: 13px; margin-top: 4px;">The agent will create listings on its next cycle, or use the Generate page to trigger one manually.</p>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+async function delist(listingId, marketplace) {
+    if (!confirm(`Remove this listing from ${marketplace}?`)) return;
+    try {
+        const res = await fetch(`/api/listings/${listingId}/${marketplace}/delist`, { method: 'POST' });
+        if (res.ok) {
+            location.reload();
+        } else {
+            alert('Failed to delist: ' + (await res.text()));
+        }
+    } catch (e) {
+        alert('Error: ' + e.message);
+    }
+}
+</script>
+{% endblock %}

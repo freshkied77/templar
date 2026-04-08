@@ -1,0 +1,17 @@
+# Render Blueprint — Templar Marketing Website
+# Deploy: renderctl deploy --spec render-website.yaml
+# Or connect this repo to Render and it auto-detects.
+
+services:
+  - type: web
+    name: templar-website
+    env: python
+    region: oregon
+    buildCommand: pip install -r requirements-website.txt
+    startCommand: gunicorn -k uvicorn.workers.UvicornWorker src.website.app:app --bind 0.0.0.0:$PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PORT
+        value: "10000"
+      - key: PYTHON_VERSION
+        value: "3.12"

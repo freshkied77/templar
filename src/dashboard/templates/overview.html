@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}Overview{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>System Overview</h1>
+    <p>Your AI product system at a glance &nbsp;&middot;&nbsp; Updated {{ summary.generated_at }}</p>
+</div>
+
+<div class="stat-grid">
+    <div class="stat-card">
+        <div class="label">Active Listings</div>
+        <div class="value" style="color: var(--accent);">{{ summary.stats.active_listings }}</div>
+        <div class="sub">across {{ summary.total_listings_count }} total</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">Total Revenue</div>
+        <div class="value" style="color: var(--green);">${{ "%.2f"|format(summary.stats.total_sales_revenue or 0) }}</div>
+        <div class="sub">all time</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">Open Exceptions</div>
+        <div class="value" style="color: {% if summary.stats.open_exceptions > 0 %}var(--red){% else %}var(--green){% endif %};">
+            {{ summary.stats.open_exceptions }}
+        </div>
+        <div class="sub">requiring attention</div>
+    </div>
+    <div class="stat-card">
+        <div class="label">Avg Revenue / Listing</div>
+        <div class="value">
+            {% if summary.stats.active_listings > 0 %}
+            ${{ "%.2f"|format((summary.stats.total_sales_revenue or 0) / summary.stats.active_listings) }}
+            {% else %}—{% endif %}
+        </div>
+        <div class="sub">across active</div>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 32px;">
+    <div class="card">
+        <h3 style="font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px;">Revenue by Marketplace</h3>
+        {% if summary.sales_by_marketplace %}
+        {% for mp, count in summary.sales_by_marketplace.items() %}
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border);">
+            <span style="font-size: 14px; text-transform: capitalize;">{{ mp }}</span>
+            <span style="font-weight: 700; color: var(--green);">{{ count }} sales &middot; ${{ "%.2f"|format(summary.revenue_by_marketplace.get(mp, 0) or 0) }}</span>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p style="color: var(--text-muted); font-size: 13px;">No sales data yet. Listings will begin generating revenue once published.</p>
+        {% endif %}
+    </div>
+    <div class="card">
+        <h3 style="font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px;">Top Categories by Revenue</h3>
+        {% if summary.sales_by_category %}
+        {% for cat, count in summary.sales_by_category.items() %}
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border);">
+            <span style="font-size: 14px;">{{ cat }}</span>
+            <span style="font-weight: 700; color: var(--accent);">{{ count }} sales &middot; ${{ "%.2f"|format(summary.revenue_by_category.get(cat, 0) or 0) }}</span>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p style="color: var(--text-muted); font-size: 13px;">No category data yet. Start generating templates to build category performance history.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% if summary.exceptions %}
+<div class="card">
+    <h3 style="font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px;">Recent Exceptions</h3>
+    {% for exc in summary.exceptions[:3] %}
+    <div class="exception-card severity-{{ exc.severity }}">
+        <div class="exc-header">
+            <div class="exc-title">{{ exc.title }}</div>
+            <span class="badge badge-{% if exc.severity == 'high' %}error{% else %}warning{% endif %}">{{ exc.severity }}</span>
+        </div>
+        <div class="exc-desc">{{ exc.description }}</div>
+    </div>
+    {% endfor %}
+    <a href="/exceptions" class="btn btn-primary" style="margin-top: 12px; width: fit-content;">View All Exceptions →</a>
+</div>
+{% endif %}
+
+{% if summary.notion_stats %}
+<div class="card" style="margin-top: 0;">
+    <h3 style="font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px;">Notion Direct Delivery</h3>
+    <div style="display: flex; gap: 32px;">
+        <div>
+            <div style="font-size: 24px; font-weight: 700; color: var(--green);">{{ summary.notion_stats.total }}</div>
+            <div style="font-size: 12px; color: var(--text-muted);">Buyers Connected</div>
+        </div>
+        <div>
+            <div style="font-size: 24px; font-weight: 700; color: var(--accent);">{{ summary.notion_stats.delivered }}</div>
+            <div style="font-size: 12px; color: var(--text-muted);">Templates Delivered</div>
+        </div>
+        <div>
+            <div style="font-size: 24px; font-weight: 700; color: var(--red);">{{ summary.notion_stats.pending }}</div>
+            <div style="font-size: 12px; color: var(--text-muted);">Pending Delivery</div>
+        </div>
+        <div style="flex: 1;">
+            <a href="/notion" class="btn btn-primary" style="float: right;">Manage Notion →</a>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All Templates — Templar</title>
+<meta name="description" content="Browse all Templar Notion templates. AI-generated, premium quality, delivered instantly to your workspace.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --bg: #0a0a0f; --surface: #13131a; --surface-2: #1a1a24; --border: #252530; --text: #e0e0e8; --text-muted: #8888a0; --accent: #7c6af7; --accent-dim: rgba(124,106,247,0.12); --green: #34d399; --red: #f87171; --font: 'Inter', -apple-system, sans-serif; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.6; font-size: 16px; }
+  a { color: var(--accent); text-decoration: none; }
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(10,10,15,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0 24px; display: flex; align-items: center; height: 60px; }
+  .nav-brand { font-weight: 800; font-size: 20px; color: var(--text); letter-spacing: -0.5px; }
+  .nav-brand span { color: var(--accent); }
+  .nav-links { display: flex; gap: 8px; margin-left: auto; }
+  .nav-links a { color: var(--text-muted); font-size: 14px; padding: 6px 14px; border-radius: 6px; transition: all 0.15s; }
+  .nav-links a:hover { color: var(--text); background: var(--surface-2); text-decoration: none; }
+  .nav-cta { background: var(--accent) !important; color: white !important; font-weight: 600; }
+  .page-header { padding: 60px 24px 40px; max-width: 1160px; margin: 0 auto; }
+  .page-header h1 { font-size: 40px; font-weight: 800; letter-spacing: -1px; margin-bottom: 8px; }
+  .page-header p { color: var(--text-muted); font-size: 18px; }
+  .container { max-width: 1160px; margin: 0 auto; padding: 0 24px 80px; }
+  .template-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+  .template-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: all 0.2s; }
+  .template-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .template-card-art { height: 140px; display: flex; align-items: center; justify-content: center; font-size: 48px; }
+  .template-card-art.habit { background: linear-gradient(135deg, #1a1a2e, #16213e); }
+  .template-card-art.finance { background: linear-gradient(135deg, #0d1f0d, #1a3a1a); }
+  .template-card-art.project { background: linear-gradient(135deg, #1a1a2e, #2a1a4a); }
+  .template-card-art.content { background: linear-gradient(135deg, #2a1a0a, #3a2a1a); }
+  .template-card-art.student { background: linear-gradient(135deg, #1a1a2e, #1a2a4a); }
+  .template-card-art.goal { background: linear-gradient(135deg, #2a1a2a, #3a1a3a); }
+  .template-card-body { padding: 22px; }
+  .template-card-cat { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 6px; }
+  .template-card h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+  .template-card-tagline { font-size: 14px; color: var(--text-muted); margin-bottom: 14px; }
+  .template-card-bottom { display: flex; justify-content: space-between; align-items: center; }
+  .template-card-price { font-size: 20px; font-weight: 800; color: var(--green); }
+  .template-card-link { font-size: 14px; font-weight: 600; color: var(--accent); }
+  .template-card-link:hover { text-decoration: underline; }
+  footer { border-top: 1px solid var(--border); padding: 40px 24px; max-width: 1160px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  footer p { font-size: 14px; color: var(--text-muted); }
+  footer a { color: var(--text-muted); font-size: 14px; margin-left: 24px; }
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-brand">Temp<span>lar</span></div>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/#how-it-works">How It Works</a>
+    <a href="/#pricing">Pricing</a>
+    <a href="https://gumroad.com" target="_blank" class="nav-cta">Buy Now →</a>
+  </div>
+</nav>
+
+<div class="page-header">
+  <h1>All Templates</h1>
+  <p>{{ templates|length }} templates — AI-generated, ready to use in minutes.</p>
+</div>
+
+<div class="container">
+  <div class="template-grid">
+    {% for tpl in templates %}
+    <div class="template-card">
+      <div class="template-card-art {{ tpl.image_class }}">
+        {{ "🎯" if tpl.image_class == "habit" else "💰" if tpl.image_class == "finance" else "⚡" if tpl.image_class == "project" else "📅" if tpl.image_class == "content" else "🎓" if tpl.image_class == "student" else "🏆" }}
+      </div>
+      <div class="template-card-body">
+        <div class="template-card-cat">{{ tpl.category }}</div>
+        <h3>{{ tpl.title }}</h3>
+        <p class="template-card-tagline">{{ tpl.tagline }}</p>
+        <div class="template-card-bottom">
+          <div class="template-card-price">${{ tpl.price }}</div>
+          <a href="/template/{{ tpl.slug }}" class="template-card-link">View →</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 Templar. All rights reserved.</p>
+  <div>
+    <a href="/privacy">Privacy</a>
+    <a href="/terms">Terms</a>
+  </div>
+</footer>
+</body>
+</html>

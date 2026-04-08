@@ -1,0 +1,6 @@
+# Minimal requirements for the Templar marketing website
+# Only what's needed — not the full agent dependencies.
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+jinja2>=3.1.3
+gunicorn>=0.29.0
