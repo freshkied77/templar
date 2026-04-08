@@ -13,7 +13,10 @@ import os
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+# Resolve project root relative to this file's location, not cwd.
+# Works both locally and on Render where cwd may differ from the code location.
+PROJECT_ROOT = Path(__file__).resolve().parents[2]   # templar/src/website/app.py → templar/
+sys.path.insert(0, str(PROJECT_ROOT))
 
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
